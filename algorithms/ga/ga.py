@@ -9,12 +9,14 @@ import tsp
 
 problem = tsp
 
-problem.read_instance("../../problems/tsp/instances/att48.tsp")
+problem.read_instance("../../problems/tsp/instances/test4.tsp")
 
 CROMOSSOME_SIZE = problem.NUM_POINTS
-POPULATION_SIZE = 10
-MAX_EVALUATIONS = 100
+POPULATION_SIZE = 100
+MAX_EVALUATIONS = 10000
 SELECTION_SIZE = 2
+CROSSOVER_RATE = 0.9
+MUTATION_RATE = 0.1
 
 evaluations = 0
 
@@ -33,7 +35,11 @@ def create_population(population_size):
 
 def evaluate_population(population):
     for cromossome in population:
-        cromossome.fitness = problem.evaluate_solution(cromossome.genes)
+        evaluate_solution(cromossome)
+
+
+def evaluate_solution(cromossome):
+    cromossome.fitness = problem.evaluate_solution(cromossome.genes)
 
 
 def select_parents(population):
@@ -53,24 +59,35 @@ def select_parents(population):
 
 
 def apply_crossover(parents):
-    cut_point = random.randint(0, CROMOSSOME_SIZE-1)
-    offspring = []
-    for i in range(CROMOSSOME_SIZE):
-
-        if i > cut_point:
-            offspring = parents[1][i]
-            offspring[1][i] = parents[0][i]
-        else:
-
+    offspring = copy.deepcopy(parents[0])
+    if random.uniform(0, 1) < CROSSOVER_RATE:
+        cut_point = random.randint(0, CROMOSSOME_SIZE-1)
+        for i in range(CROMOSSOME_SIZE):
+            if i > cut_point:
+                offspring.genes[i] = copy.deepcopy(parents[1].genes[i])
     return offspring
 
 
 def apply_mutation(offspring):
-    pass
+    if random.uniform(0, 1) < MUTATION_RATE:
+        while(True):
+            r1 = random.randint(0, CROMOSSOME_SIZE-1)
+            r2 = random.randint(0, CROMOSSOME_SIZE-1)
+            if r1 != r2: break
+        aux = offspring.genes[r1]
+        offspring.genes[r1] = offspring.genes[r2]
+        offspring.genes[r2] = aux
+    return offspring
 
 
 def replacement(population, offspring):
-    pass
+    worst = population[0]
+    for cromossome in population:
+        if cromossome.fitness > worst.fitness:
+            worst = cromossome
+    population.remove(worst)
+    population.append(copy.deepcopy(offspring))
+    return population
 
 
 def update_progress():
@@ -78,18 +95,28 @@ def update_progress():
     evaluations += POPULATION_SIZE
 
 
+def print_solution(cromossome):
+    for gene in cromossome.genes:
+        print(gene.id, end=" ")
+    print("\t", cromossome.fitness, "")
+
+
 def executar():
-    population = create_population(5)
+    population = create_population(POPULATION_SIZE)
     evaluate_population(population)
-    #while(evaluations < MAX_EVALUATIONS):
-    parents = select_parents(population)
-        #offspring = apply_crossover(parents)
-        #offspring = apply_mutation(offspring)
-        #evaluate_population(offspring)
-        #population = replacement(population, offspring)
-        #update_progress()
+    while(evaluations < MAX_EVALUATIONS):
+        parents = select_parents(population)
+        offspring = apply_crossover(parents)
+        offspring = apply_mutation(offspring)
+        evaluate_solution(offspring)
+        population = replacement(population, offspring)
+        population.sort(key = lambda c: c.fitness)
+        print("best: ", end="")
+        print_solution(population[0])
+        update_progress()
     return population
 
 population = executar()
-for cromossome in population:
-    print(cromossome.fitness)
+population.sort(key = lambda c: c.fitness)
+print("Final best: ", end="")
+print_solution(population[0])
