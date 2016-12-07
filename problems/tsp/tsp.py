@@ -35,10 +35,18 @@ def evaluate_solution(solution):
     fitness = 0
     size = len(solution)
     for i in range(size-1):
-        fitness += euclidean_distance(solution[i], solution[i+1])
-    fitness += euclidean_distance(solution[size-1], solution[0])
+        ax = points[solution[i]]['x']
+        bx = points[solution[i+1]]['x']
+        ay = points[solution[i]]['y']
+        by = points[solution[i+1]]['y']
+        fitness += euclidean_distance(ax, ay, bx, by)#solution[i], solution[i+1])
+    ax = points[solution[size-1]]['x']
+    bx = points[solution[0]]['x']
+    ay = points[solution[size-1]]['y']
+    by = points[solution[0]]['y']
+    fitness += euclidean_distance(ax, ay, bx, by)
     return fitness
 
 
 def euclidean_distance(ax, ay, bx, by):
-    return math.sqrt(math.pow(points[pa]['x'] - points[pb]['x'], 2) + math.pow(points[pa]['y'] - points[pb]['y'], 2))
+    return math.sqrt(math.pow(ax-bx, 2) + math.pow(bx-by, 2))
