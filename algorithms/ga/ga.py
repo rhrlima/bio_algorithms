@@ -22,9 +22,13 @@ class Cromossome:
         self.fitness = fitness
 
 
-def create_population(population_size):
+    def copy(self):
+        return Cromossome(self.genes[:], self.fitness)
+
+
+def create_population():
     population = []
-    for i in range(population_size):
+    for i in range(POPULATION_SIZE):
         population.append(Cromossome(problem.create_solution(), -1))
     return population
 
@@ -55,7 +59,7 @@ def select_parents(population):
 
 
 def apply_crossover(parents):
-    offspring = Cromossome(parents[0].genes[:], -1)
+    offspring = parents[0].copy()
     if random.uniform(0, 1) < CROSSOVER_RATE:
         while(True):
             r1 = random.randint(0, CROMOSSOME_SIZE-1)
@@ -85,7 +89,6 @@ def apply_mutation(offspring):
         aux = offspring.genes[r1]
         offspring.genes[r1] = offspring.genes[r2]
         offspring.genes[r2] = aux
-    return offspring
 
 
 def replacement(population, offspring):
@@ -94,7 +97,7 @@ def replacement(population, offspring):
         if cromossome.fitness > worst.fitness:
             worst = cromossome
     population.remove(worst)
-    population.append(Cromossome(offspring.genes, offspring.fitness))
+    population.append(offspring.copy())
     return population
 
 
@@ -108,24 +111,21 @@ def update_progress():
     evaluations += POPULATION_SIZE
 
 
-def executar():
-    population = create_population(POPULATION_SIZE)
+def execute():
+    population = create_population()
     evaluate_population(population)
     init_progress()
     while(evaluations < MAX_EVALUATIONS):
         parents = select_parents(population)
         offspring = apply_crossover(parents)
-        offspring = apply_mutation(offspring)
+        apply_mutation(offspring)
         evaluate_solution(offspring)
         population = replacement(population, offspring)
-        #population.sort(key = lambda c: c.fitness)
-        #print("best: ", population[0].fitness)
         update_progress()
     return population
 
 
 for i in range(30):
-    population = executar()
+    population = execute()
     population.sort(key = lambda c: c.fitness)
     print("Final best: ", population[0].fitness)
-    #print_solution(population[0])
