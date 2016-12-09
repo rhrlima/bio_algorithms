@@ -3,9 +3,7 @@ import math
 import random
 import re
 
-NAME = ""
-DESC = ""
-NUM_POINTS = 0
+
 points = {}
 
 
@@ -39,7 +37,7 @@ def evaluate_solution(solution):
         bx = points[solution[i+1]]['x']
         ay = points[solution[i]]['y']
         by = points[solution[i+1]]['y']
-        fitness += euclidean_distance(ax, ay, bx, by)#solution[i], solution[i+1])
+        fitness += euclidean_distance(ax, ay, bx, by)
     ax = points[solution[size-1]]['x']
     bx = points[solution[0]]['x']
     ay = points[solution[size-1]]['y']

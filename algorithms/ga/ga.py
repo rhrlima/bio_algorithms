@@ -1,20 +1,12 @@
 import math
 import random
 import sys
-sys.path.append('../../problems/tsp')
-import tsp
 
-problem = tsp
-instance_name = sys.argv[1]
-problem.read_instance("../../problems/tsp/instances/" + instance_name)
-
-CROMOSSOME_SIZE = problem.NUM_POINTS
 POPULATION_SIZE = 100
 MAX_EVALUATIONS = 100000
 SELECTION_SIZE = 2
 CROSSOVER_RATE = 0.9
 MUTATION_RATE = 0.05
-
 
 class Cromossome:
     def __init__(self, genes, fitness):
@@ -24,6 +16,12 @@ class Cromossome:
 
     def copy(self):
         return Cromossome(self.genes[:], self.fitness)
+
+
+def set_problem(p):
+    global problem, CROMOSSOME_SIZE
+    problem = p
+    CROMOSSOME_SIZE = problem.NUM_POINTS
 
 
 def create_population():
@@ -123,9 +121,3 @@ def execute():
         population = replacement(population, offspring)
         update_progress()
     return population
-
-
-for i in range(30):
-    population = execute()
-    population.sort(key = lambda c: c.fitness)
-    print("Final best: ", population[0].fitness)

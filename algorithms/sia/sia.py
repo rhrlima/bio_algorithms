@@ -1,14 +1,7 @@
 import math
 import random
 import sys
-sys.path.append('../../problems/tsp')
-import tsp
 
-problem = tsp
-instance_name = sys.argv[1]
-problem.read_instance("../../problems/tsp/instances/" + instance_name)
-
-ANTIBODY_SIZE = problem.NUM_POINTS
 POPULATION_SIZE = 100   #Tamanho population
 SELECTION_SIZE = 5      #Numero de selecionados
 NUM_CLONES = 3          #Numero de clones
@@ -25,6 +18,12 @@ class Antibody:
 
     def copy(self):
         return Antibody(self.genes[:], self.afinity, self.norm_afinity)
+
+
+def set_problem(p):
+    global problem, ANTIBODY_SIZE
+    problem = p
+    ANTIBODY_SIZE = problem.NUM_POINTS
 
 
 def create_population(population_size):
@@ -123,9 +122,3 @@ def execute():
         replace_worst(population, clones)
         update_progress()
     return population
-
-
-for i in range(30):
-    population = execute()
-    population.sort(key = lambda a: a.afinity)
-    print("Final best: ", population[0].afinity)
