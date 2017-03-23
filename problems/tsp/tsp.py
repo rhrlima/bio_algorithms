@@ -47,4 +47,5 @@ def evaluate_solution(solution):
 
 
 def euclidean_distance(ax, ay, bx, by):
+    
     return math.sqrt(math.pow(ax-bx, 2) + math.pow(bx-by, 2))

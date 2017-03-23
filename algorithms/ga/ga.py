@@ -37,6 +37,7 @@ def evaluate_population(population):
 
 
 def evaluate_solution(cromossome):
+    
     cromossome.fitness = problem.evaluate_solution(cromossome.genes)
 
 

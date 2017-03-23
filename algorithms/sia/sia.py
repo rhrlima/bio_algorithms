@@ -7,7 +7,7 @@ SELECTION_SIZE = 5      #Numero de selecionados
 NUM_CLONES = 3          #Numero de clones
 MUTATION_RATE = 0.5     #Intesidade de hipermutacao
 NUM_NEW = 3             #Numero de novos anti corpos a serem gerados
-EVALUATIONS = 100000    #Numero de avaliações
+EVALUATIONS = 100000    #Numero de avaliacoes
 
 
 class Antibody:
