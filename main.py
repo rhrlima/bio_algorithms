@@ -11,6 +11,7 @@ sys.path.append('algorithms/pso')
 
 #Importing problems
 import tsp
+import rosenbrock
 
 #Importing algorithms
 import ga
@@ -21,7 +22,6 @@ import pso
 tsp.read_instance("problems/tsp/instances/test10.tsp")
 
 #Setting the problem to the algorithm
-"""
 print("Executing GA")
 ga.set_problem(tsp)
 for i in range(30):
@@ -30,6 +30,7 @@ for i in range(30):
     population.sort(key = lambda c: c.fitness)
     print("Final best: ", population[0].fitness)
 
+
 print("Executing SIA")
 sia.set_problem(tsp)
 for i in range(30):
@@ -37,15 +38,11 @@ for i in range(30):
     population = sia.execute()
     population.sort(key = lambda a: a.afinity)
     print("Final best: ", population[0].afinity)
-"""
 
-import rosenbrock
-
-#rosenbrock.set_dimensions(5)
 
 print("Executing PSO")
 pso.set_problem(rosenbrock)
-swarm = pso.execute()
-
-for p in swarm:
-	print(p.position)
+for i in range(30):
+	swarm = pso.execute()
+	swarm.sort(key = lambda p: p.fitness)
+	print("Final best:", swarm[0].fitness)

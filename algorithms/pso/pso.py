@@ -1,19 +1,19 @@
 import random
 
-SWARM_SIZE = 10
-MAX_EVALUATIONS = 1000
+SWARM_SIZE = 100
+MAX_EVALUATIONS = 100000
+C1 = 1.5
+C2 = 1.5
+MUTATION_RATE = 0.01
 
-C1 = 2.0
-C2 = 2.0
-GLOBAL_BEST = []
-
+GLOBAL_BEST = None
 problem = None
 
 class Particle:
 
 	def __init__(self, pos, fitness):
 		self.position = pos
-		self.best_pos = pos
+		self.best_pos = pos[:]
 		self.velocity = [0 for i in range(len(pos))]
 		self.fitness = -1
 
@@ -50,23 +50,33 @@ def update_velocity(particle):
 
 
 def update_position(particle):
-	for index in len(particle.position):
+	for index in range(len(particle.position)):
 		particle.position[index] += particle.velocity[index]
 
 
 def apply_mutation(particle):
-
-	pass
+	rate = random.uniform(0, 1)
+	if rate < MUTATION_RATE:
+		index = random.randint(0, len(particle.position)-1)
+		particle.position[index] = random.uniform(problem.MIN, problem.MAX)
 
 
 def update_local_best(particle):
-
-	pass
+	prev_fit = problem.evaluate_solution(particle.best_pos)
+	curr_fit = problem.evaluate_solution(particle.position)
+	if curr_fit < prev_fit:
+		particle.best_pos = particle.position[:]
 
 
 def update_global_best(particle):
-
-	pass
+	global GLOBAL_BEST
+	if GLOBAL_BEST is None:
+		GLOBAL_BEST = particle.position[:]
+	else:
+		prev_fit = problem.evaluate_solution(GLOBAL_BEST)
+		curr_fit = problem.evaluate_solution(particle.position)
+		if curr_fit < prev_fit:
+			GLOBAL_BEST = particle.position[:]
 
 
 def init_progress():
@@ -91,7 +101,5 @@ def execute():
 			update_position(particle)
 			apply_mutation(particle)
 			evaluate_particle(particle)
-			update_local_best(particle)
-			update_global_best(particle)
 		update_progress()
 	return swarm
